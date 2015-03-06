@@ -1082,10 +1082,7 @@ func (c *cache) Flush() {
 	c.Unlock()
 }
 
-// Find oldest N items, and Expire them.
-// Returns the number "expired".
-// BIG HAIRY ALERT: This function assumes it is called
-// from inside a c.Lock() .. c.Unlock() block. 
+// Expire the item with the lowest atime.
 func (c *cache) ExpireLRU() {
 
 	// We need the number of UNexpired Items

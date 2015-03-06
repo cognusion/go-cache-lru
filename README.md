@@ -1,22 +1,34 @@
 # go-cache-lru
 
 go-cache-lru is a fork of [github.com/pmylund/go-cache](http://github.com/pmylund/go-cache) with light-weight 
-least-recently-used functionality added it. The author of go-cache didn't 
-want the LRU feature added to his time cache, so I'll be maintaining it here.
+least-recently-used expiration functionality added it. The author of go-cache 
+didn't want the LRU feature added to his time cache, so I'll be maintaining 
+it here. 
 
 go-cache-lru is an in-memory key:value store/cache similar to memcached that is
 suitable for applications running on a single machine. Its major advantage is
 that, being essentially a thread-safe `map[string]interface{}` with expiration
-times, it doesn't need to serialize or transmit its contents over the network.
+times and an optional item count cap, it doesn't need to serialize or transmit 
+its contents over the network.
 
 Any object can be stored, for a given duration, forever, or until it becomes the
-"least recently used" and the cache is under pressure, and the cache can be
+"least recently used" while the cache is under pressure, and the cache can be
 safely used by multiple goroutines.
 
-Although go-cache isn't meant to be used as a persistent datastore, the entire
+Although go-cache-lru isn't meant to be used as a persistent datastore, the entire
 cache can be saved to and loaded from a file (using `c.Items()` to retrieve the
 items map to serialize, and `NewFrom()` to create a cache from a deserialized
 one) to recover from downtime quickly. (See the docs for `NewFrom()` for caveats.)
+
+When creating a new cache object, if you set the `maxItems` value above 0, the LRU
+functionality is enabled. The cache automatically updates a timestamp every time 
+a given item is retrieved. Every time a new item is added to the cache, the current 
+number of items is checked, and if that count is equal or greater than the maxItems 
+value, the item with the oldest timestamp is "expired" to make way for the new item 
+(think ring buffer, with access ordering). Note that "expired" doesn't mean "deleted". 
+Whatever you set your purge interval to controls when the item will actually be 
+removed from the cache.
+
 
 ### Installation
 
@@ -26,6 +38,7 @@ one) to recover from downtime quickly. (See the docs for `NewFrom()` for caveats
 
 	import (
 		"fmt"
+		"time"
 		"github.com/cognusion/go-cache-lru"
 	)
 
@@ -34,7 +47,7 @@ one) to recover from downtime quickly. (See the docs for `NewFrom()` for caveats
 		// Create a cache with a default expiration time of 5 minutes, and which
 		// purges expired items every 30 seconds, and a cap on the number of items 
 		// at 30,000
-		c := cache.New(5*time.Minute, 30*time.Second, 30,000)
+		c := cache.New(5*time.Minute, 30*time.Second, 30000)
 
 		// Set the value of the key "foo" to "bar", with the default expiration time
 		c.Set("foo", "bar", cache.DefaultExpiration)
@@ -104,7 +117,6 @@ one) to recover from downtime quickly. (See the docs for `NewFrom()` for caveats
 		// 2
 
 	}
-
 
 ### Reference
 
