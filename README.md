@@ -38,8 +38,8 @@ removed from the cache.
 
 	import (
 		"fmt"
-		"time"
 		"github.com/cognusion/go-cache-lru"
+		"time"
 	)
 
 	func main() {
