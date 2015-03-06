@@ -1,11 +1,16 @@
-# go-cache
+# go-cache-lru
 
-go-cache is an in-memory key:value store/cache similar to memcached that is
+go-cache-lru is a fork of [github.com/pmylund/go-cache](http://github.com/pmylund/go-cache) with light-weight 
+least-recently-used functionality added it. The author of go-cache didn't 
+want the LRU feature added to his time cache, so I'll be maintaining it here.
+
+go-cache-lru is an in-memory key:value store/cache similar to memcached that is
 suitable for applications running on a single machine. Its major advantage is
 that, being essentially a thread-safe `map[string]interface{}` with expiration
 times, it doesn't need to serialize or transmit its contents over the network.
 
-Any object can be stored, for a given duration or forever, and the cache can be
+Any object can be stored, for a given duration, forever, or until it becomes the
+"least recently used" and the cache is under pressure, and the cache can be
 safely used by multiple goroutines.
 
 Although go-cache isn't meant to be used as a persistent datastore, the entire
@@ -15,20 +20,21 @@ one) to recover from downtime quickly. (See the docs for `NewFrom()` for caveats
 
 ### Installation
 
-`go get github.com/pmylund/go-cache`
+`go get github.com/cognusion/go-cache-lru`
 
 ### Usage
 
 	import (
 		"fmt"
-		"github.com/pmylund/go-cache"
+		"github.com/cognusion/go-cache-lru"
 	)
 
 	func main() {
 
 		// Create a cache with a default expiration time of 5 minutes, and which
-		// purges expired items every 30 seconds
-		c := cache.New(5*time.Minute, 30*time.Second)
+		// purges expired items every 30 seconds, and a cap on the number of items 
+		// at 30,000
+		c := cache.New(5*time.Minute, 30*time.Second, 30,000)
 
 		// Set the value of the key "foo" to "bar", with the default expiration time
 		c.Set("foo", "bar", cache.DefaultExpiration)
@@ -102,4 +108,4 @@ one) to recover from downtime quickly. (See the docs for `NewFrom()` for caveats
 
 ### Reference
 
-`godoc` or [http://godoc.org/github.com/pmylund/go-cache](http://godoc.org/github.com/pmylund/go-cache)
+`godoc` or [http://godoc.org/github.com/cognusion/go-cache-lru](http://godoc.org/github.com/cognusion/go-cache-lru)
