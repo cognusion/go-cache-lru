@@ -22,10 +22,10 @@ one) to recover from downtime quickly. (See the docs for `NewFrom()` for caveats
 
 When creating a new cache object, if you set the `maxItems` value above 0, the LRU
 functionality is enabled. The cache automatically updates a timestamp every time 
-a given item is retrieved. Every time a new item is added to the cache, the current 
-number of items is checked, and if that count is equal or greater than the maxItems 
-value, the item with the oldest timestamp is "expired" to make way for the new item 
-(think ring buffer, with access ordering). Note that "expired" doesn't mean "deleted". 
+a given item is retrieved. In the background, the janitor takes care of deleting items
+that have expired because of staleness, or are least-recently-used when the cache is
+under pressure.
+
 Whatever you set your purge interval to controls when the item will actually be 
 removed from the cache.
 
