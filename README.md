@@ -2,8 +2,8 @@
 
 go-cache-lru is a fork of [github.com/pmylund/go-cache](http://github.com/pmylund/go-cache) with light-weight 
 least-recently-used expiration functionality added it. The author of go-cache 
-didn't want the LRU feature added to his time cache, so I'll be maintaining 
-it here. 
+initially didn't want the LRU feature added to his time cache, so I forked it, but now
+this is superfluous.
 
 go-cache-lru is an in-memory key:value store/cache similar to memcached that is
 suitable for applications running on a single machine. Its major advantage is
